@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-// import Popover from "react-bootstrap/Popover";
-// import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 
 export default function SummaryForm({ setOrderPhase }) {
   const [tcChecked, setTcChecked] = useState(false);
@@ -15,18 +15,18 @@ export default function SummaryForm({ setOrderPhase }) {
     setOrderPhase("completed");
   }
 
-  // const popover = (
-  //   <Popover id="termsandconditions-popover">
-  //     <Popover.Content>No ice cream will actually be delivered</Popover.Content>
-  //   </Popover>
-  // );
+  const popover = (
+    <Popover id="termsandconditions-popover">
+      <Popover.Content>No ice cream will actually be delivered</Popover.Content>
+    </Popover>
+  );
 
   const checkboxLabel = (
     <span>
-      I agree to Terms and Conditions
-      {/* <OverlayTrigger placement="right" overlay={popover}>
+      I agree to
+      <OverlayTrigger placement="right" overlay={popover}>
         <span style={{ color: "blue" }}> Terms and Conditions</span>
-      </OverlayTrigger> */}
+      </OverlayTrigger>
     </span>
   );
 
