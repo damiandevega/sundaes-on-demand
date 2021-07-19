@@ -1,15 +1,8 @@
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import { pricePerItem } from "../constants";
+import { formatCurrency } from "../utilities";
 
-// format number as currency
-function formatCurrency(amount) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(amount);
-}
-
+// @ts-ignore
 const OrderDetails = createContext();
 
 // create custom hook to check whether we're inside a provider
@@ -18,7 +11,7 @@ export function useOrderDetails() {
 
   if (!context) {
     throw new Error(
-      "useOrderDetails must be used within an OrderDetailsProivder"
+      "useOrderDetails must be used within an OrderDetailsProvider"
     );
   }
 
@@ -50,7 +43,6 @@ export function OrderDetailsProvider(props) {
     const scoopsSubtotal = calculateSubtotal("scoops", optionCounts);
     const toppingsSubtotal = calculateSubtotal("toppings", optionCounts);
     const grandTotal = scoopsSubtotal + toppingsSubtotal;
-
     setTotals({
       scoops: formatCurrency(scoopsSubtotal),
       toppings: formatCurrency(toppingsSubtotal),
@@ -69,9 +61,33 @@ export function OrderDetailsProvider(props) {
       setOptionCounts(newOptionCounts);
     }
 
+    // alternate updateItemCount that DOES NOT mutate state. Reference Q&A:
+    // https://www.udemy.com/course/react-testing-library/learn/#questions/14446658/
+    // function updateItemCount(itemName, newItemCount, optionType) {
+    //   // get option Map and make a copy
+    //   const { optionType: optionMap } = optionCounts;
+    //   const newOptionMap = new Map(optionMap);
+
+    //   // update the copied Map
+    //   newOptionMap.set(itemName, parseInt(newItemCount));
+
+    //   // create new object with the old optionCounts plus new map
+    //   const newOptionCounts = { ...optionCounts };
+    //   newOptionCounts[optionType] = newOptionMap;
+
+    //   // update state
+    //   setOptionCounts(newOptionCounts);
+    // }
+
+    function resetOrder() {
+      setOptionCounts({
+        scoops: new Map(),
+        toppings: new Map(),
+      });
+    }
     // getter: object containing option counts for scoops and toppings, subtotals and totals
     // setter: updateOptionCount
-    return [{ ...optionCounts, totals }, updateItemCount];
+    return [{ ...optionCounts, totals }, updateItemCount, resetOrder];
   }, [optionCounts, totals]);
   return <OrderDetails.Provider value={value} {...props} />;
 }
